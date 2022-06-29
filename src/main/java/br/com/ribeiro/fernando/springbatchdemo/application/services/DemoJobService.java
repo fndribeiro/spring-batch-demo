@@ -56,7 +56,7 @@ public class DemoJobService {
 	/**
 	 * Run every 1 minute.
 	 */
-	@Scheduled(cron = "0 0/1 * 1/1 * ?")
+	// @Scheduled(cron = "0 0/1 * 1/1 * ?")
 	public void scheduleJob() {
 		
 		Map<String, JobParameter> params = new HashMap<String, JobParameter>();
