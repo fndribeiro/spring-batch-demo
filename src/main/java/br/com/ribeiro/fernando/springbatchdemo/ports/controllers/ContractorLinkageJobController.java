@@ -32,12 +32,13 @@ public class ContractorLinkageJobController {
 		
 		try {
 			
+			JobParameter fileJobParameter = service.writefile(file);
+			
 			Map<String, JobParameter> params = new HashMap<String, JobParameter>();
 			params.put("currentTime", new JobParameter(System.currentTimeMillis()));
+			params.put("file", fileJobParameter);
 			
 			JobParameters jobParameters = new JobParameters(params);
-			
-			service.writefile(file);
 			
 			Job job = (Job) applicationContext.getBean("contractorLinkage");
 			

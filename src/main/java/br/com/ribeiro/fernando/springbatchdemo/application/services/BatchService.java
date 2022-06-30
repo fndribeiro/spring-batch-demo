@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -23,7 +24,7 @@ public abstract class BatchService {
 	@Autowired
 	private JobLauncher jobLauncher;
 	
-	public abstract BatchService writefile(MultipartFile file) throws IOException;
+	public abstract JobParameter writefile(MultipartFile file) throws IOException;
 	
 	@Async
 	public void startJob(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {

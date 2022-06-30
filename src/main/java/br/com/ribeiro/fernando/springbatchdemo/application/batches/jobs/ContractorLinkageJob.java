@@ -1,14 +1,13 @@
 package br.com.ribeiro.fernando.springbatchdemo.application.batches.jobs;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -18,6 +17,7 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,7 +49,7 @@ public class ContractorLinkageJob {
 			"DEPLOYED BAND EQUIVALENT", 
 			"SECTOR"};
 	
-	private File fileToBeDeleted;
+	private File fileToDelete;
 	
 	@Autowired
 	public ContractorLinkageJob(StepBuilderFactory stepBuilder, JobBuilderFactory jobBuilder, ContractorItemWriter itemWriter) {
@@ -74,12 +74,16 @@ public class ContractorLinkageJob {
 		return stepBuilder
 				.get("Contractor Linkage Step")
 				.<Contractor, Contractor>chunk(3)
-				.reader(flatFileItemReader())
+				.reader(flatFileItemReader(null))
 				.writer(itemWriter)
 				.build();
 	}
 	
-	private FlatFileItemReader<Contractor> flatFileItemReader() {
+	@StepScope
+	@Bean
+	public FlatFileItemReader<Contractor> flatFileItemReader(@Value("#{jobParameters['file']}") FileSystemResource fileSystemResource) {
+		
+		fileToDelete = fileSystemResource.getFile();
 		
 		DelimitedLineTokenizer delimiter = new DelimitedLineTokenizer();
 		delimiter.setNames(columns);
@@ -91,30 +95,13 @@ public class ContractorLinkageJob {
 		lineMapper.setLineTokenizer(delimiter);
 		lineMapper.setFieldSetMapper(fieldMapper);
 		
-		File folder = new File("static/temp/csvs/contractor-linkage");
-		
-		List<File> files = Arrays.asList(
-				folder.listFiles()
-				);
-		
-		File file = files
-			.stream()
-			.findFirst()
-			.get();
-		
 		FlatFileItemReader<Contractor> flatFileItemReader = new FlatFileItemReader<Contractor>();
-			
-		fileToBeDeleted = file;
-			
-		FileSystemResource fileSystemResource = new FileSystemResource(file);
 			
 		flatFileItemReader.setResource(fileSystemResource);
 		flatFileItemReader.setLineMapper(lineMapper);
 			
 		// Skip header.
 		flatFileItemReader.setLinesToSkip(1);
-		
-		System.out.println(file.getName());
 		
 		return flatFileItemReader;
 		
@@ -125,7 +112,7 @@ public class ContractorLinkageJob {
 			@Override
 			public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 				
-				fileToBeDeleted.delete();
+				fileToDelete.delete();
 				
 				return RepeatStatus.FINISHED;
 			}

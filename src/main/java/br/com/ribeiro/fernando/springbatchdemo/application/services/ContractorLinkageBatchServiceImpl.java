@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 
+import org.springframework.batch.core.JobParameter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,7 @@ import br.com.ribeiro.fernando.springbatchdemo.application.batches.contants.Batc
 public class ContractorLinkageBatchServiceImpl extends BatchService {
 	
 	@Override
-	public BatchService writefile(MultipartFile file) throws IOException {
+	public JobParameter writefile(MultipartFile file) throws IOException {
 		
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		
@@ -28,7 +29,9 @@ public class ContractorLinkageBatchServiceImpl extends BatchService {
 		
 		Files.copy(file.getInputStream(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		
-		return this;
+		System.out.println(targetFile.getPath());
+		
+		return new JobParameter(targetFile.getPath());
 	}
 
 }
