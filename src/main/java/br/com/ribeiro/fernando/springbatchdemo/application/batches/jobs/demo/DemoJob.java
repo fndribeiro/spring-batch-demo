@@ -1,4 +1,4 @@
-package br.com.ribeiro.fernando.springbatchdemo.application.batches.jobs;
+package br.com.ribeiro.fernando.springbatchdemo.application.batches.jobs.demo;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

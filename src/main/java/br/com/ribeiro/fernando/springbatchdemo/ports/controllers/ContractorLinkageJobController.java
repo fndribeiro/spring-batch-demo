@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.com.ribeiro.fernando.springbatchdemo.application.batches.contants.JobParameterConstants;
 import br.com.ribeiro.fernando.springbatchdemo.application.services.BatchService;
 import br.com.ribeiro.fernando.springbatchdemo.ports.controllers.contants.ControllersURIs;
 
@@ -35,8 +36,8 @@ public class ContractorLinkageJobController {
 			JobParameter fileJobParameter = service.writefile(file);
 			
 			Map<String, JobParameter> params = new HashMap<String, JobParameter>();
-			params.put("currentTime", new JobParameter(System.currentTimeMillis()));
-			params.put("file", fileJobParameter);
+			params.put(JobParameterConstants.CURRENT_TIME, new JobParameter(System.currentTimeMillis()));
+			params.put(JobParameterConstants.FILE, fileJobParameter);
 			
 			JobParameters jobParameters = new JobParameters(params);
 			
