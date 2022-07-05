@@ -1,4 +1,4 @@
-package br.com.ribeiro.fernando.springbatchdemo.application.batches.jobs.contractorlinkage;
+package br.com.ribeiro.fernando.springbatchdemo.application.batches.jobs.flatfile;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
